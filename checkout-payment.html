@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Checkout | The Aura Collection</title>
+    
+    <!-- Google Fonts - Optimized Loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <style>
+        /* ========================================
+           RESET & ROOT VARIABLES
+           ======================================== */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            /* Dark modern color palette */
+            --bg-primary: #0a0612;
+            --bg-secondary: rgba(26, 16, 46, 0.6);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --bg-glass-hover: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.1);
+            --border-medium: rgba(255, 255, 255, 0.15);
+            
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            
+            /* Vibrant accents */
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #a78bfa;
+            --accent-hover: #7c3aed;
+            
+            /* Status colors */
+            --success-bg: rgba(34, 197, 94, 0.1);
+            --success-border: rgba(34, 197, 94, 0.3);
+            --success-text: #4ade80;
+            
+            --error-bg: rgba(239, 68, 68, 0.1);
+            --error-border: rgba(239, 68, 68, 0.3);
+            --error-text: #f87171;
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           VIBRANT ANIMATED BACKGROUND
+           ======================================== */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.18) 0%, transparent 55%),
+                radial-gradient(circle at 80% 25%, rgba(251, 191, 36, 0.16) 0%, transparent 55%),
+                radial-gradient(circle at 35% 75%, rgba(34, 197, 94, 0.14) 0%, transparent 55%),
+                radial-gradient(circle at 75% 80%, rgba(244, 114, 182, 0.15) 0%, transparent 55%),
+                radial-gradient(circle at 50% 50%, #1a102e 0%, #0a0612 100%);
+            background-attachment: fixed;
+            will-change: transform;
+        }
+
+        .background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.5;
+        }
+
+        /* ========================================
+           HEADER
+           ======================================== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 16, 46, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: color 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--accent-primary);
+        }
+
+        .header-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        /* ========================================
+           MAIN CONTAINER
+           ======================================== */
+        .checkout-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .checkout-container {
+                grid-template-columns: 1.3fr 1fr;
+                gap: 2rem;
+                padding: 2.5rem 1.5rem;
+            }
+        }
+
+        /* ========================================
+           GLASS CARD SECTIONS
+           ======================================== */
+        .info-section,
+        .payment-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .info-section,
+            .payment-section {
+                padding: 2rem;
+            }
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (min-width: 768px) {
+            .section-title {
+                font-size: 1.75rem;
+            }
+        }
+
+        .section-subtitle {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* ========================================
+           FORM STYLES
+           ======================================== */
+        .checkout-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-label {
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .form-input:hover,
+        .form-textarea:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* ========================================
+           PAYMENT OPTIONS
+           ======================================== */
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .payment-option {
+            border-radius: 14px;
+            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.active {
+            border-color: var(--accent-primary);
+            background: rgba(139, 92, 246, 0.1);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+        }
+
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .option-radio {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .payment-option.active .option-radio {
+            border-color: var(--accent-primary);
+        }
+
+        .radio-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 0.2s ease;
+        }
+
+        .payment-option.active .radio-dot {
+            transform: scale(1);
+        }
+
+        .option-info {
+            flex: 1;
+        }
+
+        .option-title {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            margin-bottom: 0.125rem;
+            color: var(--text-primary);
+        }
+
+        .option-description {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .option-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .payment-option.active .option-content {
+            max-height: 1000px;
+        }
+
+        /* ========================================
+           QR & COD CONTENT
+           ======================================== */
+        .qr-container,
+        .cod-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .qr-placeholder {
+            text-align: center;
+            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+        }
+
+        .qr-code-image {
+            width: 70%;
+            height: 60%;
+            margin: 0 auto 0.75rem;
+            object-fit: cover;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .payment-details,
+        .info-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8125rem;
+        }
+
+        .cod-amount {
+            padding: 1rem;
+            background: rgba(139, 92, 246, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+        }
+
+        .amount-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--accent-secondary);
+        }
+
+        .info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-list li {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding-left: 1rem;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .info-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0.25rem;
+            color: var(--accent-primary);
+            font-size: 1rem;
+        }
+
+        /* ========================================
+           FILE UPLOAD
+           ======================================== */
+        .upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .upload-label:hover {
+            border-color: var(--accent-primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .upload-icon {
+            width: 1.75rem;
+            height: 1.75rem;
+            color: var(--accent-primary);
+        }
+
+        .upload-text {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+        }
+
+        .upload-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .upload-preview {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-top: 0.75rem;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            border-radius: 12px;
+        }
+
+        .upload-preview.active {
+            display: flex;
+        }
+
+        .remove-btn {
+            padding: 0.375rem 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* ========================================
+           ORDER SUMMARY
+           ======================================== */
+        .order-summary {
+            padding: 1.25rem;
+            background: rgba(139, 92, 246, 0.08);
+            backdrop-filter: blur(16px);
+            border-radius: 14px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-secondary);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-row.total {
+            font-size: 1rem;
+            font-weight: 700;
+            padding-top: 0.75rem;
+            margin-top: 0.5rem;
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .summary-row.total .summary-value {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ========================================
+           SUBMIT BUTTON
+           ======================================== */
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        @media (min-width: 768px) {
+            .submit-btn:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 24px rgba(139, 92, 246, 0.5);
+            }
+        }
+
+        .btn-icon {
+            width: 1rem;
+            height: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ========================================
+           SECURITY BADGE
+           ======================================== */
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            border-radius: 12px;
+        }
+
+        .security-icon {
+            width: 0.875rem;
+            height: 0.875rem;
+            color: var(--success-text);
+        }
+
+        .security-text {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           STICKY PAYMENT SECTION (Desktop)
+           ======================================== */
+        @media (min-width: 1024px) {
+            .payment-section {
+                position: sticky;
+                top: 6rem;
+                align-self: start;
+            }
+        }
+
+        /* ========================================
+           MOBILE OPTIMIZATIONS
+           ======================================== */
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.875rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .progress-text {
+                font-size: 0.7rem;
+            }
+
+            .section-title {
+                font-size: 1.25rem;
+            }
+
+            .info-section,
+            .payment-section {
+                padding: 1.25rem;
+            }
+
+            .qr-code-image {
+                width: 140px;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Vibrant Animated Background -->
+    <div class="background"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="logo">AURA</a>
+        <div class="header-progress">
+            <div class="progress-dot"></div>
+            <span class="progress-text">Secure Checkout</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="checkout-container">
+        
+        <!-- Left Section - Customer Information -->
+        <section class="info-section">
+            <div class="section-header">
+                <h2 class="section-title">Delivery Information</h2>
+                <p class="section-subtitle">We'll use these details to ensure your order reaches you safely</p>
+            </div>
+
+            <form id="checkoutForm" class="checkout-form">
+                
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Contact Details</h3>
+                    
+                    <div class="form-group">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            name="fullName" 
+                            class="form-input" 
+                            placeholder="Enter your full name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="your.email@example.com"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                class="form-input" 
+                                placeholder="+977 98XXXXXXXX"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                <div class="form-section">
+                    <h3 class="form-section-title">Shipping Address</h3>
+                    
+                    <div class="form-group">
+                        <label for="address" class="form-label">Street Address</label>
+                        <input 
+                            type="text" 
+                            id="address" 
+                            name="address" 
+                            class="form-input" 
+                            placeholder="House number, street name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city" class="form-label">City</label>
+                            <input 
+                                type="text" 
+                                id="city" 
+                                name="city" 
+                                class="form-input" 
+                                placeholder="City"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="state" class="form-label">State/Province</label>
+                            <input 
+                                type="text" 
+                                id="state" 
+                                name="state" 
+                                class="form-input" 
+                                placeholder="State or Province"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postalCode" class="form-label">Postal Code</label>
+                            <input 
+                                type="text" 
+                                id="postalCode" 
+                                name="postalCode" 
+                                class="form-input" 
+                                placeholder="Postal Code"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="country" class="form-label">Country</label>
+                            <input 
+                                type="text" 
+                                id="country" 
+                                name="country" 
+                                class="form-input" 
+                                placeholder="Nepal"
+                                value="Nepal"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location" class="form-label">Location Coordinates (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="location" 
+                            name="location" 
+                            class="form-input" 
+                            placeholder="Latitude, Longitude or Google Maps Link"
+                        >
+                        <span class="form-hint">Share your location to help us deliver faster</span>
+                    </div>
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="notes" class="form-label">Delivery Instructions (Optional)</label>
+                        <textarea 
+                            id="notes" 
+                            name="notes" 
+                            class="form-textarea" 
+                            placeholder="Any special delivery instructions..."
+                            rows="3"
+                        ></textarea>
+                    </div>
+                </div>
+
+            </form>
+        </section>
+
+        <!-- Right Section - Payment Options -->
+        <section class="payment-section">
+            <div class="section-header">
+                <h2 class="section-title">Payment Method</h2>
+                <p class="section-subtitle">Choose your preferred way to pay</p>
+            </div>
+
+            <!-- Payment Options -->
+            <div class="payment-options">
+                
+                <!-- QR Payment Option -->
+                <div class="payment-option active" id="qrOption">
+                    <div class="option-header" onclick="selectPaymentMethod('qr')">
+                        <div class="option-radio">
+                            <div class="radio-dot"></div>
+                        </div>
+                        <div class="option-info">
+                            <h3 class="option-title">QR Payment</h3>
+                            <p class="option-description">Scan & Pay via eSewa, Khalti, or Bank App</p>
+                        </div>
+                    </div>
+                    <div class="option-content" id="qrContent">
+                        <div class="qr-container">
+                            <div class="qr-placeholder">
+                                <img id="qrImage" src="qr.png" alt="QR Code for Payment" class="qr-code-image">
+                                <p class="qr-instruction" style="font-size: 0.75rem; color: var(--text-secondary);">Scan this QR code with your payment app</p>
+                            </div>
+                            
+                            <div class="payment-details">
+                                <div class="detail-item">
+                                    <span style="color: var(--text-secondary);">Amount</span>
+                                    <span style="font-weight: 600; color: var(--text-primary);" id="qrAmount">Rs. 0.00</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span style="color: var(--text-secondary);">Payment To</span>
+                                    <span style="font-weight: 600; color: var(--text-primary);">Aura Atelier</span>
+                                </div>
+                            </div>
+
+                            <!-- Upload Payment Screenshot -->
+                            <div class="upload-section">
+                                <label for="paymentProof" class="upload-label">
+                                    <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                    <span class="upload-text">Upload Payment Screenshot</span>
+                                    <span class="upload-hint">PNG, JPG up to 5MB</span>
+                                </label>
+                                <input 
+                                    type="file" 
+                                    id="paymentProof" 
+                                    name="paymentProof" 
+                                    class="upload-input" 
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onchange="handleFileUpload(event)"
+                                >
+                                <div id="uploadPreview" class="upload-preview"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cash on Delivery Option -->
+                <div class="payment-option" id="codOption">
+                    <div class="option-header" onclick="selectPaymentMethod('cod')">
+                        <div class="option-radio">
+                            <div class="radio-dot"></div>
+                        </div>
+                        <div class="option-info">
+                            <h3 class="option-title">Cash on Delivery</h3>
+                            <p class="option-description">Pay when your order arrives</p>
+                        </div>
+                    </div>
+                    <div class="option-content" id="codContent">
+                        <div class="cod-info">
+                            <div class="info-card">
+                                <div style="display: flex; gap: 1rem;">
+                                    <svg style="width: 1.5rem; height: 1.5rem; color: var(--accent-primary); flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <div style="flex: 1;">
+                                        <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">How it works</h4>
+                                        <ul class="info-list">
+                                            <li>Your order will be confirmed upon submission</li>
+                                            <li>Pay in cash when delivery arrives at your doorstep</li>
+                                            <li>Please keep exact change ready for smooth delivery</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="cod-amount">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 500;">Amount to pay on delivery</span>
+                                    <span class="amount-value" id="codAmount">Rs. 4,850</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h3 class="summary-title">Order Summary</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div class="summary-row">
+                        <span style="color: var(--text-secondary);">Subtotal</span>
+                        <span style="font-weight: 600; color: var(--text-primary);">Rs. 4,850</span>
+                    </div>
+                    <div class="summary-row">
+                        <span style="color: var(--text-secondary);">Delivery Fee</span>
+                        <span style="font-weight: 600; color: var(--text-primary);">Free</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span style="color: var(--text-secondary);">Total</span>
+                        <span class="summary-value">Rs. 4,850</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="button" id="submitBtn" class="submit-btn" onclick="handleCheckout()">
+                <span id="btnText">Complete Order</span>
+                <svg id="btnIcon" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </button>
+
+            <!-- Security Badge -->
+            <div class="security-badge">
+                <svg class="security-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span class="security-text">Your information is secure and encrypted</span>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // ========================================
+        // EMAILJS INITIALIZATION
+        // ========================================
+        // Initialize EmailJS with your Public Key
+        (function(){
+            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your EmailJS public key
+        })();
+
+        // ========================================
+        // GLOBAL VARIABLES
+        // ========================================
+        let selectedPaymentMethod = 'qr';
+        let uploadedFile = null;
+        let cartItems = [];
+
+        // ========================================
+        // LOAD CART FROM LOCALSTORAGE
+        // ========================================
+        function loadCartFromStorage() {
+            try {
+                const savedCart = localStorage.getItem('auraCart');
+                if (savedCart) {
+                    cartItems = JSON.parse(savedCart);
+                    console.log('Cart loaded:', cartItems);
+                }
+            } catch (error) {
+                console.error('Error loading cart:', error);
+            }
+        }
+
+        // Load cart when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCartFromStorage();
+        });
+
+        // ========================================
+        // PAYMENT METHOD SELECTION
+        // ========================================
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            const qrOption = document.getElementById('qrOption');
+            const codOption = document.getElementById('codOption');
+            
+            qrOption.classList.toggle('active', method === 'qr');
+            codOption.classList.toggle('active', method === 'cod');
+        }
+
+        // ========================================
+        // FILE UPLOAD HANDLING
+        // ========================================
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!validTypes.includes(file.type)) {
+                showNotification('Please upload a PNG or JPG image', 'error');
+                event.target.value = '';
+                return;
+            }
+            
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                showNotification('File size must be less than 5MB', 'error');
+                event.target.value = '';
+                return;
+            }
+            
+            uploadedFile = file;
+            showUploadPreview(file);
+        }
+
+        function showUploadPreview(file) {
+            const preview = document.getElementById('uploadPreview');
+            preview.innerHTML = `
+                <svg style="width: 1.125rem; height: 1.125rem; color: var(--success-text); flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span style="flex: 1; font-size: 0.75rem; color: var(--text-primary);">${file.name} (${formatFileSize(file.size)})</span>
+                <button type="button" onclick="removeUpload()" class="remove-btn">Remove</button>
+            `;
+            preview.classList.add('active');
+        }
+
+        function removeUpload() {
+            uploadedFile = null;
+            document.getElementById('paymentProof').value = '';
+            document.getElementById('uploadPreview').classList.remove('active');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // ========================================
+        // FORM VALIDATION
+        // ========================================
+        function validateForm() {
+            const form = document.getElementById('checkoutForm');
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+                    field.style.background = 'rgba(239, 68, 68, 0.1)';
+                    setTimeout(() => {
+                        field.style.borderColor = '';
+                        field.style.background = '';
+                    }, 3000);
+                }
+            });
+            
+            return isValid;
+        }
+
+        // ========================================
+        // CONVERT FILE TO BASE64
+        // ========================================
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // ========================================
+        // FORMAT CART ITEMS FOR EMAIL
+        // ========================================
+        function formatCartItems() {
+            if (!cartItems || cartItems.length === 0) {
+                return 'No items in cart';
+            }
+            
+            let formattedText = '';
+            cartItems.forEach((item, index) => {
+                formattedText += `${index + 1}. ${item.name || 'Unknown Item'}\n`;
+                formattedText += `   - Quantity: ${item.quantity || 1}\n`;
+                formattedText += `   - Price: Rs. ${item.price || '0'}\n`;
+                formattedText += `   - Subtotal: Rs. ${((item.price || 0) * (item.quantity || 1))}\n`;
+                if (index < cartItems.length - 1) {
+                    formattedText += '\n';
+                }
+            });
+            
+            return formattedText;
+        }
+
+        // ========================================
+        // MAIN CHECKOUT HANDLER
+        // ========================================
+        async function handleCheckout() {
+            // Validate form
+            if (!validateForm()) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Validate email
+            const email = document.getElementById('email').value;
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            // Validate payment screenshot for QR method
+            if (selectedPaymentMethod === 'qr' && !uploadedFile) {
+                showNotification('Please upload your payment screenshot', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            
+            submitBtn.disabled = true;
+            btnText.textContent = 'Processing...';
+            btnIcon.innerHTML = '<div class="spinner"></div>';
+            
+            try {
+                // Prepare form data
+                const formData = {
+                    fullName: document.getElementById('fullName').value,
+                    email: email,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    postalCode: document.getElementById('postalCode').value,
+                    country: document.getElementById('country').value,
+                    location: document.getElementById('location').value || 'Not provided',
+                    notes: document.getElementById('notes').value || 'None',
+                    paymentMethod: selectedPaymentMethod === 'qr' ? 'QR Payment' : 'Cash on Delivery',
+                    orderTotal: 'Rs. 4,850',
+                    cartItems: formatCartItems(),
+                    orderDate: new Date().toLocaleString('en-US', { 
+                        dateStyle: 'full', 
+                        timeStyle: 'short' 
+                    })
+                };
+                
+                // Convert payment screenshot to base64 if exists
+                let paymentProofBase64 = '';
+                if (uploadedFile) {
+                    paymentProofBase64 = await fileToBase64(uploadedFile);
+                }
+                
+                // Prepare email parameters - ENSURE ALL VALUES ARE STRINGS
+                const emailParams = {
+                    to_email: 'theengtamangsanjay@gmail.com',
+                    from_name: String(formData.fullName),
+                    from_email: String(formData.email),
+                    phone: String(formData.phone),
+                    address: String(formData.address),
+                    city: String(formData.city),
+                    state: String(formData.state),
+                    postal_code: String(formData.postalCode),
+                    country: String(formData.country),
+                    location: String(formData.location),
+                    delivery_notes: String(formData.notes),
+                    payment_method: String(formData.paymentMethod),
+                    order_total: String(formData.orderTotal),
+                    cart_items: String(formData.cartItems),
+                    order_date: String(formData.orderDate)
+                };
+                
+                // Only add payment screenshot if it exists (for QR payments)
+                if (paymentProofBase64) {
+                    emailParams.payment_screenshot = paymentProofBase64;
+                }
+                
+                // Send email using EmailJS
+                console.log('Sending email with params:', {
+                    ...emailParams,
+                    payment_screenshot: paymentProofBase64 ? 'BASE64_IMAGE_DATA' : 'NO_IMAGE'
+                });
+                
+                const response = await emailjs.send(
+                    'YOUR_SERVICE_ID',  // Replace with your EmailJS service ID
+                    'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+                    emailParams
+                );
+                
+                console.log('Email sent successfully:', response);
+                
+                // Show success confirmation
+                showConfirmation(formData);
+                
+                // Clear cart from localStorage
+                localStorage.removeItem('auraCart');
+                cartItems = [];
+                
+            } catch (error) {
+                console.error('Detailed error information:', {
+                    message: error.message,
+                    text: error.text,
+                    status: error.status,
+                    fullError: error
+                });
+                
+                let errorMessage = 'Failed to process order. ';
+                
+                if (error.text) {
+                    errorMessage += error.text;
+                } else if (error.message) {
+                    errorMessage += error.message;
+                } else {
+                    errorMessage += 'Please check console for details.';
+                }
+                
+                showNotification(errorMessage, 'error');
+                
+                // Reset button state
+                submitBtn.disabled = false;
+                btnText.textContent = 'Complete Order';
+                btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>';
+            }
+        }
+
+        // ========================================
+        // NOTIFICATION SYSTEM
+        // ========================================
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            const isSuccess = type === 'success';
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 1.5rem;
+                right: 1.5rem;
+                left: 1.5rem;
+                z-index: 9999;
+                transform: translateY(-150%);
+                padding: 1rem;
+                border-radius: 12px;
+                background: ${isSuccess ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)'};
+                backdrop-filter: blur(16px);
+                border: 1px solid ${isSuccess ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)'};
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                max-width: 380px;
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <svg style="width: 1rem; height: 1rem; color: ${isSuccess ? '#4ade80' : '#f87171'}; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ${isSuccess 
+                            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
+                            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'
+                        }
+                    </svg>
+                    <div style="font-size: 0.8125rem; color: #ffffff; font-weight: 500;">${message}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            requestAnimationFrame(() => {
+                notification.style.transform = 'translateY(0)';
+            });
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateY(-150%)';
+                setTimeout(() => notification.remove(), 400);
+            }, 3500);
+        }
+
+        // ========================================
+        // ORDER CONFIRMATION MODAL
+        // ========================================
+        function showConfirmation(formData) {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(10, 6, 18, 0.8);
+                backdrop-filter: blur(8px);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1.5rem;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                max-width: 480px;
+                width: 100%;
+                background: rgba(26, 16, 46, 0.95);
+                backdrop-filter: blur(24px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 16px;
+                padding: 2rem 1.5rem;
+                text-align: center;
+                transform: scale(0.9);
+                transition: transform 0.3s ease;
+                box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+            `;
+            
+            const paymentMethodText = formData.paymentMethod;
+            
+            modal.innerHTML = `
+                <div style="width: 3rem; height: 3rem; margin: 0 auto 1.25rem; background: rgba(34, 197, 94, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(34, 197, 94, 0.3);">
+                    <svg style="width: 1.75rem; height: 1.75rem; color: #4ade80;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 0.75rem; background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Order Confirmed!</h2>
+                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1.5rem; line-height: 1.6; font-size: 0.875rem;">
+                    Thank you, ${formData.fullName}! Your order has been successfully placed.
+                    ${selectedPaymentMethod === 'qr' ? 'We have received your payment confirmation.' : 'Please keep the exact amount ready for delivery.'}
+                </p>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem; text-align: left; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #a78bfa; margin-bottom: 0.875rem; font-weight: 600;">Order Details</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8125rem;">
+                        <span style="color: rgba(255, 255, 255, 0.7);">Payment Method</span>
+                        <span style="font-weight: 600; color: #ffffff;">${paymentMethodText}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8125rem;">
+                        <span style="color: rgba(255, 255, 255, 0.7);">Delivery To</span>
+                        <span style="font-weight: 600; color: #ffffff;">${formData.city}, ${formData.state}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8125rem;">
+                        <span style="color: rgba(255, 255, 255, 0.7);">Contact</span>
+                        <span style="font-weight: 600; color: #ffffff;">${formData.phone}</span>
+                    </div>
+                </div>
+                
+                <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-bottom: 1.25rem;">
+                    A confirmation email has been sent to <strong style="color: rgba(255, 255, 255, 0.7);">${formData.email}</strong>
+                </p>
+                
+                <button onclick="closeConfirmation()" style="width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); border: none; border-radius: 12px; font-size: 0.8125rem; font-weight: 600; cursor: pointer; color: white; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);">
+                    Continue Shopping
+                </button>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            requestAnimationFrame(() => {
+                overlay.style.opacity = '1';
+                modal.style.transform = 'scale(1)';
+            });
+            
+            window.confirmationOverlay = overlay;
+        }
+
+        function closeConfirmation() {
+            const overlay = window.confirmationOverlay;
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.remove();
+                    window.location.href = 'index.html';
+                }, 300);
+            }
+        }
+
+        // ========================================
+        // INPUT FORMATTING
+        // ========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/[^\d+\s-]/g, '');
+                });
+            }
+            
+            const postalCodeInput = document.getElementById('postalCode');
+            if (postalCodeInput) {
+                postalCodeInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

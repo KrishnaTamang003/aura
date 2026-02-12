@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Contact Us | Aura Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:wght@400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(244, 114, 182, 0.12) 0%, transparent 50%),
+                #0f0a1a;
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .serif { font-family: 'Playfair Display', serif; }
+
+        /* Optimized Glass Effects */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .glass-card:active {
+            transform: scale(0.98);
+        }
+
+        .glass-button {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .glass-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Form */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        textarea.glass-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Navigation */
+        .nav-link {
+            position: relative;
+            letter-spacing: 0.12em;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-link:active {
+            opacity: 1;
+        }
+
+        .nav-link.active {
+            opacity: 1;
+        }
+
+        /* Mobile Menu - Optimized */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 75%;
+            max-width: 280px;
+            height: 100vh;
+            background: rgba(15, 10, 26, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            padding: 4rem 1.5rem 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active { right: 0; }
+
+        .mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            z-index: 1002;
+            transition: background 0.2s ease;
+        }
+
+        .menu-toggle:active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .menu-toggle span {
+            width: 20px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
+        .mobile-nav-item {
+            display: block;
+            letter-spacing: 0.15em;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            opacity: 0.8;
+            text-decoration: none;
+            color: white;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mobile-nav-item:active {
+            opacity: 1;
+        }
+
+        .mobile-nav-item.active {
+            opacity: 1;
+        }
+
+        /* Contact Icons */
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+        }
+
+        /* Map */
+        .map-container {
+            width: 100%;
+            height: 250px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .map-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .map-link {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 0.625rem 1.25rem;
+            border-radius: 999px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .map-link:active {
+            transform: scale(0.95);
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.75rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        .success-message.show { display: block; }
+
+        /* Responsive */
+        @media (max-width: 1023px) {
+            .menu-toggle { display: flex; }
+        }
+
+        @media (min-width: 768px) {
+            .map-container { height: 350px; }
+            textarea.glass-input { min-height: 130px; }
+        }
+
+        @media (min-width: 1024px) {
+            .map-container { height: 400px; }
+        }
+
+        /* Reduce animations on mobile */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="menuOverlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" class="mobile-nav-item">Home</a>
+        <a href="TheGalary.html" class="mobile-nav-item">The Gallery</a>
+        <a href="About.html" class="mobile-nav-item">About</a>
+        <a href="Contact.html" class="mobile-nav-item active">Contact</a>
+    </div>
+
+    <!-- Header -->
+    <header class="flex justify-between items-center p-4 md:p-6">
+        <a href="index.html" class="text-xl md:text-2xl tracking-widest font-light">AURA</a>
+        
+        <nav class="hidden lg:flex gap-8">
+            <a href="TheGalary.html" class="nav-link">The Gallery</a>
+            <a href="About.html" class="nav-link">About</a>
+            <a href="Contact.html" class="nav-link active">Contact</a>
+        </nav>
+
+        <div class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="px-4 md:px-8 lg:px-16 py-6 md:py-12 text-center">
+        <h1 class="serif text-3xl md:text-5xl lg:text-6xl mb-3 md:mb-4">Get in Touch</h1>
+        <p class="text-xs md:text-sm opacity-70 max-w-xl mx-auto leading-relaxed">
+            We'd love to hear from you. Whether you have a question about our products or just want to say hello.
+        </p>
+    </section>
+
+    <!-- Contact Cards - Horizontal on Mobile -->
+    <section class="px-4 md:px-8 lg:px-16 py-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 max-w-5xl mx-auto">
+            
+            <div class="glass-card rounded-xl p-4 md:p-6 text-center">
+                <div class="contact-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                </div>
+                <h3 class="serif text-base md:text-lg mb-2">Visit Us</h3>
+                <p class="text-xs opacity-70 leading-relaxed">
+                    Jorpati, Kathmandu<br>Nepal
+                </p>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 md:p-6 text-center">
+                <div class="contact-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m2 7 10 6 10-6"/>
+                    </svg>
+                </div>
+                <h3 class="serif text-base md:text-lg mb-2">Email Us</h3>
+                <p class="text-xs opacity-70 leading-relaxed">
+                    hello@auraatelier.np
+                </p>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 md:p-6 text-center">
+                <div class="contact-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                </div>
+                <h3 class="serif text-base md:text-lg mb-2">Call Us</h3>
+                <p class="text-xs opacity-70 leading-relaxed">
+                    +977 1-4123456
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="px-4 md:px-8 lg:px-16 py-6">
+        <div class="max-w-2xl mx-auto">
+            <div class="glass-card rounded-xl p-5 md:p-8">
+                <h2 class="serif text-xl md:text-3xl mb-5 md:mb-6 text-center">Send Us a Message</h2>
+                
+                <form id="contact-form" class="space-y-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider opacity-60 mb-2">First Name</label>
+                            <input type="text" name="firstName" class="glass-input" placeholder="Rajesh" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider opacity-60 mb-2">Last Name</label>
+                            <input type="text" name="lastName" class="glass-input" placeholder="Sharma" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider opacity-60 mb-2">Email</label>
+                        <input type="email" name="email" class="glass-input" placeholder="rajesh@example.com" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider opacity-60 mb-2">Phone (Optional)</label>
+                        <input type="tel" name="phone" class="glass-input" placeholder="+977 98-12345678">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider opacity-60 mb-2">Subject</label>
+                        <select name="subject" class="glass-input" required>
+                            <option value="">Select a topic</option>
+                            <option value="general">General Inquiry</option>
+                            <option value="products">Product Question</option>
+                            <option value="wholesale">Wholesale Partnership</option>
+                            <option value="press">Press & Media</option>
+                            <option value="custom">Custom Orders</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider opacity-60 mb-2">Message</label>
+                        <textarea name="message" class="glass-input" placeholder="Tell us how we can help..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="glass-button px-6 py-3 rounded-full text-xs uppercase tracking-widest w-full">
+                        Send Message
+                    </button>
+
+                    <div class="success-message" id="success-message">
+                        <p class="text-xs">✓ Thank you! We'll get back to you within 24 hours.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map -->
+    <section class="px-4 md:px-8 lg:px-16 py-6">
+        <div class="map-container max-w-5xl mx-auto">
+            <img src="Locationimage.png" alt="Location" loading="lazy">
+            <div class="map-overlay">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <p class="text-xs uppercase tracking-wider">Jorpati, Kathmandu</p>
+                <a href="https://www.google.com/maps/search/Green+hill+city/@27.735841,85.299912" target="_blank" rel="noopener" class="map-link">
+                    Open Map
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="px-4 md:px-8 lg:px-16 py-6">
+        <h2 class="serif text-2xl md:text-3xl mb-6 text-center">FAQ</h2>
+        
+        <div class="max-w-2xl mx-auto space-y-3">
+            
+            <div class="glass-card rounded-xl p-4 md:p-5">
+                <h3 class="serif text-base md:text-lg mb-2">Delivery across Nepal?</h3>
+                <p class="text-xs opacity-70 leading-relaxed">
+                    Yes! We deliver to all major cities. 2-5 business days in Kathmandu Valley.
+                </p>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 md:p-5">
+                <h3 class="serif text-base md:text-lg mb-2">Visit our studio?</h3>
+                <p class="text-xs opacity-70 leading-relaxed">
+                    Yes, by appointment. Email hello@auraatelier.np to schedule.
+                </p>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 md:p-5">
+                <h3 class="serif text-base md:text-lg mb-2">Wholesale orders?</h3>
+                <p class="text-xs opacity-70 leading-relaxed">
+                    Contact wholesale@auraatelier.np for pricing and minimums.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="px-4 md:px-8 py-6 mt-6 border-t border-white/10">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-3 text-center">
+            <div class="text-xs uppercase tracking-widest opacity-40">© 2026 Aura Atelier</div>
+            <div class="flex gap-6">
+                <a href="#" class="text-xs opacity-60">Instagram</a>
+                <a href="#" class="text-xs opacity-60">Facebook</a>
+                <a href="#" class="text-xs opacity-60">TikTok</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+        });
+
+        menuOverlay.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        });
+
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('success-message').classList.add('show');
+            setTimeout(() => {
+                e.target.reset();
+                document.getElementById('success-message').classList.remove('show');
+            }, 3000);
+        });
+    </script>
+
+</body>
+</html>
